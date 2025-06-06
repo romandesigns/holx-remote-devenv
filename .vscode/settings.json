@@ -2,7 +2,7 @@
   "files.exclude": {
     "**/.gitignore": true,
     "**/.eslintrc.json": true,
-    "**/.devcontainer": true,
+    "**/.devcontainer": false,
     "**/.github": true,
     "**/.editorconfig": true,
   }
