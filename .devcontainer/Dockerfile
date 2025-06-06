@@ -6,8 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     zsh curl git unzip sudo wget locales build-essential ruby ruby-dev \
     procps apt-transport-https ca-certificates gnupg lsb-release \
-    fontconfig && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    fontconfig dos2unix
 
 # Set shell for RUN commands
 SHELL ["/bin/bash", "-c"]
@@ -25,7 +24,7 @@ RUN su vscode -c "git clone https://github.com/zsh-users/zsh-autosuggestions ~/.
 RUN sed -i 's/^ZSH_THEME=.*/ZSH_THEME="agnoster"/' /home/vscode/.zshrc && \
     sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' /home/vscode/.zshrc
 
-# Install CaskaydiaMono Nerd Font (Monospace, required for terminal)
+# Install CaskaydiaMono Nerd Font (monospace required for terminal)
 RUN apt-get update && apt-get install -y unzip fontconfig && \
     mkdir -p /usr/share/fonts/truetype/caskaydia && \
     cd /tmp && \
@@ -35,11 +34,6 @@ RUN apt-get update && apt-get install -y unzip fontconfig && \
     fc-cache -fv && \
     rm -rf CascadiaCode CascadiaCode.zip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Add colorls for enhanced directory listings
-RUN gem install colorls && \
-    echo 'alias ls="colorls --group-directories-first"' >> /home/vscode/.zshrc && \
-    echo 'alias ll="colorls -lA"' >> /home/vscode/.zshrc
 
 # Install Homebrew (non-interactive)
 RUN if [ ! -d "/home/linuxbrew/.linuxbrew" ]; then \
@@ -52,19 +46,12 @@ RUN echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/vscod
     echo 'export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"' >> /home/vscode/.bashrc && \
     chown vscode:vscode /home/vscode/.zshrc /home/vscode/.bashrc
 
-# Install LSD from official GitHub release (.deb)
-RUN curl -sSLo /tmp/lsd.deb https://github.com/lsd-rs/lsd/releases/download/v1.1.2/lsd_1.1.2_amd64.deb && \
-    apt-get update && apt-get install -y /tmp/lsd.deb && rm /tmp/lsd.deb && \
-    echo 'alias ls="lsd --group-dirs=first"' >> /home/vscode/.zshrc && \
-    echo 'alias ll="lsd -lA"' >> /home/vscode/.zshrc && \
-    chown vscode:vscode /home/vscode/.zshrc
-
 # Set Zsh as default shell for vscode user
 RUN chsh -s $(which zsh) vscode
 
 # Install SQL tools (sqlcmd and sqlpackage)
 COPY mssql/installSQLtools.sh installSQLtools.sh
-RUN bash ./installSQLtools.sh && rm installSQLtools.sh
+RUN dos2unix installSQLtools.sh && bash ./installSQLtools.sh && rm installSQLtools.sh
 
 # Install Node.js and TypeScript using NVM
 RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && \
