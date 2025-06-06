@@ -12,8 +12,6 @@
 
 ### APPAREANCE
  - oh-my-szh (Terminal Theme)
- -  
-
 
  ## NOTE
  If error at build time is _postCreateCommand from devcontainer.json failed with exit code 2_

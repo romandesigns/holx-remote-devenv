@@ -16,9 +16,29 @@ RUN if [ ! -d "/home/vscode/.oh-my-zsh" ]; then \
     su vscode -c "sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\" \"\" --unattended"; \
     fi
 
-# Install Zsh plugins: autosuggestions & syntax highlighting
+# Install popular zsh plugins
 RUN su vscode -c "git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
-    su vscode -c "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    su vscode -c "git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" && \
+    su vscode -c "git clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search" && \
+    su vscode -c "git clone https://github.com/agkozak/zsh-z ~/.oh-my-zsh/custom/plugins/zsh-z" && \
+    su vscode -c "git clone https://github.com/wfxr/forgit ~/.oh-my-zsh/custom/plugins/forgit"
+
+# Install fonts-noto-color-emoji for emoji support
+RUN apt-get update && apt-get install -y fonts-noto-color-emoji && \
+    fc-cache -f -v
+
+# Set locale to UTF-8
+RUN apt-get update && apt-get install -y locales && \
+    sed -i 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# Install fzf with default keybindings
+RUN su vscode -c "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf" && \
+    su vscode -c "~/.fzf/install --key-bindings --completion --no-update-rc"
 
 # Configure .zshrc with agnoster theme and plugins
 RUN sed -i 's/^ZSH_THEME=.*/ZSH_THEME="agnoster"/' /home/vscode/.zshrc && \
