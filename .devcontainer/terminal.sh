@@ -8,11 +8,16 @@ sed -i 's/^ZSH_THEME=.*/ZSH_THEME="robbyrussell"/' "$ZSHRC"
 # Ensure plugins are set
 sed -i 's/^plugins=(.*/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' "$ZSHRC"
 
-# Add font preview if needed
+# Add font preview note
 echo '# Using CaskaydiaMono Nerd Font — make sure VS Code is configured' >> "$ZSHRC"
 
-# Optional: add helpful aliases
+# Add helpful aliases
 echo 'alias ll="ls -lah"' >> "$ZSHRC"
+
+# Set Oh My Zsh update behavior
+echo '# Oh My Zsh Update Preferences' >> "$ZSHRC"
+echo 'DISABLE_AUTO_UPDATE=false' >> "$ZSHRC"
+echo 'DISABLE_UPDATE_PROMPT=false' >> "$ZSHRC"
 
 # Fix ownership in case it's root
 chown vscode:vscode "$ZSHRC"
